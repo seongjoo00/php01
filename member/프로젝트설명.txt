@@ -1,0 +1,276 @@
+datetime 은 ssl 에서 구하는 경우가 많음
+
+필드에 들어갈값이 데이터베이스에 들어갈값이 적절한가
+
+관련된 파일별로 정리해놓는게 제일좋음
+
+website는 내가하는 사이트 이름으로 해줘야함
+members는 회원관리용 페이지
+따로 로그인 폴더 만들꺼
+
+
+****회원가입****
+
+**회원가입데이터 정리**
+1. index.php (메인페이지같은것)
+2. join.php(회원가입페이지)
+    1)id_check.php
+    2)id_search.php
+3. members.php만들때 확인해야할 두가지
+    메소드가 뭐냐 필드의 name값
+4. result.php(가입완료페이지)
+
+**로그인 데이터 정리 **
+1. login.php
+2. login_ok.php
+3. logout.php
+
+
+members.php가 해야할일 3가지
+
+// 이전페이지에서 데이터 받아오기
+    $--->php의 변수선언문은 $(달러임)
+
+    php도 대소문자 구분 해야함
+    $까지가 변수임
+    $uname = $_POST["uname"];
+    (회원가입에서 데이터를 보내는 방식이 POST이기 때문에)
+
+    **폼태그에 name을 부여해야하는 아주 중요한 이유**
+    members.php에서 input에서 입력된 값이 궁금하면
+    $_POST[""]중괄호안에 form태그에 입력한 input name을 써주면됨
+
+// 입력값 확인
+    js: document.wirte
+    php : echo
+
+    ex) echo $변수명
+
+    js: 변수와 문자를 연결 + 
+    php : 변수와 문자를 .(점) 으로연결
+
+    * 생년월일 자르기
+        임의의 변수하나를 만들고 mb_substr써서 쪼갠다는 함수를 변수에 담아놓음
+        변수 = 변수1."-".변수2."-".변수3;
+
+     - explode (특정문자열을 기준으로 자르기를 해라/한글에 조금약함)
+        $txt = "2010/01/20";
+        $str = explode($txt,"/"); --->$txt를 explode 한 결과값을 변수로 저장
+        출력순서정하기
+         $str[0] = 2010;
+         $str[1] = 01;
+         $str[2] = 20;
+
+     - mb_substr (특정갯수만큼 자르는것)
+        mb_substr(어떤값,몇번째부터 시작해서,카운트)
+
+    php에서 소문자 y를 쓰면 뒤에 두자리수 네자리를 출력 시킬려면 대문자 Y 
+    2010/01/20 ---> Y/m/d
+    2010.01.20 ---> Y.m.d
+    2010-01-20 ---> Y-m-d
+    
+    타임까지하는법
+    echo date("Y-m-d H:m:s",time());
+    시간은 apache 개발 나라국 기준으로 보임 ftp에 올려놓으면 정상으로 보임
+
+// 데이터베이스 연결
+
+php5.X : <?   /  mysql_
+php 7.X : <?php / mysqli_(아이언더바)
+
+$dbcon = mysqli_connect("host","아이디","비밀번호") or die("접속실패 메세지"); 
+    wamp쓰는사람은 비밀번호가 00000이고 xampp는 비밀번호 없음
+    dbcon 개발자들이 주로사용하는 연결 변수 이름 */
+
+// DB 선택
+    //mysql_select_db(연결객체,"DB명");
+    mysql_select_db($dbcon,"front1");
+    위에 $dbcon이 연결해주고 있음
+    여기까지 cmd 콘솔창에서의 use database 까지 들어간 화면이라고 생각하면됨 
+    --------------------------------------------------------------
+    이렇게하면 database를 너무 많이 접속해야하기 때문에 이부분만 따로 만들어서
+    필요할때마다 불러서 쓰는 방식을 사용함
+
+    sytle에서 외부css 불러오는게 import ----> php에서 불러오는것은 include
+
+
+// 데이터처리(저장 insert / 수정 update / 삭제 delete / 검색 select)
+데이터처리할 쿼리문 만드다음 db에 전달해줘 라고 써야함
+testdb.members(testdb안에members)
+    //쿼리 작성 php에서 쿼리문은 문자열처리해줘야함
+    //php의 변수는 따움표안에들어가도 변수임
+    //var a=1
+    /* document.write("a");--->a
+    document.write(a)--->1
+    ----------------------------
+    $a=1
+    echo $a; ---->1
+    echo "$a";---->1 */
+    //testdb.members(testdb안에members)
+    $sql = insert into members(
+        uname,uid,pwd,birthday,mobile,email,gender,reg_date)
+        values('1','2','3','4','5','6','7','8');
+
+    쿼리문작성한다 > 쿼리문장을 따움표로 감싼다 > $sql 변수로 담는다
+    a = b
+    a += c;
+    a += d;
+    출력값 abc
+
+    sql = a;
+    sql .= b;--->ab
+    sql .= c;--->abc
+
+    break ---> 다만들고나서 중간에 값만 확인하고 싶으면(밑에 db전달까지 다 만들었을경우)
+    join에서 입력값입력후 출력완료된 쿼리문을 cmd창에서 해본다음 제대로 되는지 확인
+
+    //db에 전달
+    $dbcon = mysqli_connect("localhost","root","") or die("접속실패 메세지"); 
+    여기까지는 cmd창에서 mysql -u root 까지 접속한 상태
+    mysqli_select_db($dbcon,"testdb");
+    여기는 use database까지 한거랑 같음
+
+    전달함수 = mysql_query(연결객체,쿼리)인자가 두개
+    연결객체 --> mysql_connect 문장
+    쿼리 --> 위에쓴쿼리문을 써야하는데 너무 기니깐 변수에 담아놓은것임
+
+    문자셋 설정
+        웹페이지로 넘어올때 한글깨짐 해결방법
+        1. php에 html 문자셋을 써주는 방법(mysqli_set_charset방법이 안먹힐때 씀)
+        2. 에디터창에서 저장할때 인코딩문제때문일 수 도있음(프로그램마다다름)
+        mysqli_set_charset(연결객체,"문자셋");
+        연결객체 ---> $dbcon
+        문자셋 --->"utf8"
+        이미 입력된 한글은 수정이 안되고 그다음 입력부터됨
+
+    db종료
+    mysql_close($dbcon);
+    값을 전달 했으면 닫자   
+
+// 페이지 이동
+페이지 이동하는건 자바스크립트가 가지고 있음
+주소이동 ---> location  (객체:)
+뒤로가기 ---> history.back();
+뒤로가기꾸욱누르기 ---> history.go(가고싶은 페이지의 순서);
+
+
+**아이디 중복확인**
+button 에 onclick추가
+javascript에 function 이벤트이름(){
+    window.open("팝업될 문서","팝업되었을때 이름","옵션");
+}
+검색빼고나머지는 전부 post로 해야함
+결과확인은 꼭 팝업일 필요없음
+button 타입은 button--->값을 아무것도 입력하지 않으면 검색하지 못하게 해야함
+
+구조**
+입력페이지 | 검색하는페이지 | 결과페이지 가 필요함
+
+
+input -->join 입력
+process -->데이터베이스 찾아주는
+db -->따로있음
+result -->돌아갈꺼냐 있다없다
+
+db종료까지는 members와같음
+쿼리문을 전송하고 저장하는건 거기서 끝나지만 select문은 결과를 가지고 오는동작이 필요함
+
+//db전달
+  $result = mysqli_query($db_search,$sql);/* 결과값을 가지고 와야해서 변수에 담아놓음 */
+   //var i = prompt("TEXT","");지금이거랑같은거임
+
+//결과값 리턴 --->검색일때
+mysql_ferch가 기본적임
+mysql_ferch_row--->필드순서
+mysql_ferch_array--->필드값
+결과값을 읽어와 가져와 라는뜻
+회원목록/게시판목록-->mysql_ferch_row/mysql_ferch_array 둘중에 한가지
+필드가 1개면 중복된아이디가 있다는 뜻이고 0이면 없다는 뜻인것
+select count(uid) from memebers;면 uid의 필드값이 몇개인지 알수 있음
+mysql_ferch_row/mysql_ferch_array을가지고 스크립트로 만들수도 있고
+카운트의 값으로 체크할 수도있지만 row(행) 발생한 행을 가지고 체크할 수 도 있음
+
+로그인이나 목록/클릭하면 내용나오게 하는것이나 내용수정하게 하는페이지 다똑같은 방법
+mysqli_ferch로 가야함
+
+//결과 출력
+<?php
+        if(!$row){
+            echo '사용 가능한 아이디 입니다.'
+        }else{
+            echo '사용할 수 없는 아이디 입니다.'
+        };
+?>
+이렇게 써도됨
+
+document/location/history 은 같은 라인임
+**돌아가기**
+<a href="javascript:history.back()">[돌아가기]</a> ---> 회원가입에서 이전으로 에서도 쓸 수 있음
+function return_id(){
+            opener.document.getElementById("uid").value = "<?php echo $id_check; ?>";
+            /* "따움표 잊지말고 넣기 */
+        }
+!!주의!!
+페이지소스봤을때 opener.document.getElementById("uid").value = 여기에 값이 들어올수 있기때문에
+강제로 스크립트적용하면 사용할 수없지만 join.php에 값이 들어가짐(해킹될 수있음)
+이럴때는 스크립트 자체를 날려버리면 해결할 수있다
+
+
+
+
+**사용하기**
+클리하면 join.php 아이디 입력부분에 값이 들어가야함
+function return_id(){
+            opener.document.getElementById("uid").value = "<?php echo $id_check; ?>";
+            /* "따움표 잊지말고 넣기 */
+        }
+
+
+
+<title>"<?php echo $id_check;?>"검색결과</title> 이렇게 써주면 ""검색결과 이렇게 뜸
+
+//db종료
+페이지이동에는 두가지 1)값이 0일때 사용가능합니다. 2)다시 아이디 검색창-->이렇게 써도 된지만 다른방법도 있음
+
+
+***로그인****
+website > login > login.php/login_ok.php
+
+db전달까지는 똑같음
+검색해야하니깐 결과값이 있어야함
+
+결과값에 뭐가 써있는지 알아내야함
+이럴때 쓰는게 mysql_ferch
+
+비밀번호는 아이디가 있을때에만
+
+여기서 쿼리를 얻은값은 이페이지 에서만 유효해 하지만 로그인은 모든페이지에서 유효해야하기때문에
+session--->모든페이지에서 공통으로 사용할 수 있는 자원
+이거없으면 로그인 유지할 수 없다
+$_SESSION --->세션아이디에 변수
+
+
+01.23 수업
+**index페이지에서 로그인시 로그아웃으로 바꾸기
+session --->로그인이 되었는지 확인할 수있음
+a라는 페이지에서 구해진 값을 그전체에서 사용할 수 있게해줌
+
+로그인전에 에러문구 안뜨게 하는방법
+isset 이걸로 바꿔줘
+로그인이랑 아이디정보가 유지되어야하는 상단에는 기본적으로 반드시
+밑에있는 코드를 넣어야함
+<?php
+    session_start();//로그인되었는지 알수 있음
+    /* echo $_SESSION["uid"]; */
+    //로그인전 오류문자 안나오게 하는방법
+    $sid = isset($_SESSION["uid"])? $_SESSION["uid"]:"";
+    //isset 이런상황에서 이거로 바꿔줘
+    //(조건)? A:B;
+    //세션아이디가 있으면(A) 세션아이디 띄우고 없으면(B) 아무것도 띄우지마;
+?>
+개발자 도구에서 application 에서 session을 알아낼 수 있음
+
+** 로그아웃 페이지
+일단 session을 켜봐야 값이 있는지 없는지 알 수 있으니깐 session_start 넣어야함
+unset 삭제해라 지워라
+로그아웃할때 로그아웃 확인창 뜨게할려면 javascript로 컴펌창 띄우면됨

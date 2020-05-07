@@ -1,0 +1,96 @@
+** 데이터베이스 이름 **
+- testDB
+
+* 데이터베이스 생성 *
+create database testDB;
+
+* 데이터베이스 선택 *
+use testDB;
+
+** 입력 항목 **
+* 항목 | 필드명 | 데이터타입(길이값) | 제약
+일련번호 | idx | int | pk,ai
+이름 | uname | varchar(10) | not null
+아이디 | uid | varchar(12) | not null
+비밀번호 | pwd | varchar(12) | not null
+생년월일 | birthday | date | not null
+휴대폰번호 | mobile | varchar(11) | not null
+이메일 | email | varchar(50) | not null
+성별 | gender | char(1) | not null
+가입일 | reg_date | datetime
+
+** 테이블 이름 **
+- members
+create table members(
+    idx int primary key auto_increment,
+    uname varchar(10) not null,
+    uid varchar(12) not null,
+    pwd varchar(12) not null,
+    birthday date not null,
+    mobile varchar(11) not null,
+    email varchar(50) not null,
+    gender char(1) not null,
+    reg_date datetime
+);
+
+* 테이블 생성 확인 *
+show tables;
+
+* 테이블 구조 확인 *
+desc members;
+
+* 입력 데이터 확인 *
+select * from members;
+
+* 데이터 입력 *
+insert into members(
+    uname,uid,pwd,birthday,mobile,email,gender,reg_date)
+    values(
+        '관리자','admin','0000','2000-01-01','010-1111-2222','webmaster@abc.com','M','2010-01-20'
+);
+
+* 입력 데이터 확인 *
+select * from members;
+
+* 데이터 수정 *
+관리자의 비밀번호를 1234로 변경
+update members set pwd = '1234' where idx = 1;
+
+* 입력 데이터 확인 *
+select * from members;
+
+* 데이터 삭제 *
+관리자 데이터 삭제
+delete from members where idx = 1;
+
+* 입력 데이터 확인 *
+select * from members;
+
+** 테이블 재설정 **
+* 테이블 삭제 *
+drop table members;
+
+* 테이블 생성 확인 *
+show tables;
+
+* 테이블 생성 & 관리자 데이터 생성*
+
+* 테이블 생성 / 구조 확인 / 입력 데이터 확인 *
+
+* 웹 서버 실행 확인 *
+1.  브라우저 실행
+2. 주소창에 localhost 또는 127.0.0.1 입력 후 엔터
+
+* 로컬 웹 서버 root 폴더 위치 *
+1. xampp
+- C:\xampp\htdocs
+
+2. xampp
+- C:\birnami\apache2\htdocs
+
+* 프로젝트 설정 *
+1. root 폴더에 website 폴더 생성
+2. 브라켓의 프로젝트를 root 폴더로 설정
+3. 브라켓 메뉴 > 파일 > 프로젝트 설정
+4. 입력 창에 http://localhost/website 입력
+
